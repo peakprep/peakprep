@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeakPrep | Data-Driven Exam Success</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3B82F6; /* Blue-500 */
+            --background-color: #0F172A; /* Slate-900 */
+            --grid-line-color: rgba(60, 80, 150, 0.6); /* Slightly darker, more opaque blue for lines */
+            --cell-size: 60px; /* Increased cell size for visibility */
+            --base-blue: #1A2038; /* A deeper base blue for the background */
+            --glow-blue: rgba(90, 120, 200, 0.3); /* Softer glow for cells */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--base-blue); /* Deep base blue */
+            color: #E2E8F0; /* Slate-200 */
+            background-attachment: fixed; /* Grid stays put when scrolling */
+            position: relative;
+            overflow-x: hidden; /* Prevent horizontal scroll from grid */
+            background-image:
+                radial-gradient(circle 800px at 50% 10%, rgba(50, 80, 150, 0.4) 0%, transparent 80%); /* Stronger radial gradient */
+            background-size: 100% 100%; /* Ensure gradient covers full body */
+            background-position: center;
+        }
+
+        /* Grid overlay using ::before pseudo-element */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows interaction with content below */
+            z-index: -1; /* Ensures it stays behind content */
+            background-image:
+                linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
+            background-size: var(--cell-size) var(--cell-size);
+            background-attachment: fixed;
+            opacity: 0.8; /* Make grid lines more opaque */
+        }
+
+        .text-gradient {
+            background-image: linear-gradient(to right, #60A5FA, #ffffff); /* Blue to White Gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Styles for glowing grid cells */
+        .glowing-cell-overlay {
+            position: fixed; /* Fixed position to cover the viewport */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, var(--cell-size));
+            grid-template-rows: repeat(auto-fill, var(--cell-size));
+            pointer-events: none;
+            z-index: -2; /* Below the main grid lines */
+        }
+        .glowing-cell {
+            background-color: transparent;
+            transition: background-color 2s ease-out; /* Smooth fade out */
+        }
+        .glowing-cell.glow {
+            background-color: var(--glow-blue); /* Glowing color */
+            transition: background-color 0s; /* Instant glow */
+        }
+
+        /* Glassmorphism and 3D effect for header */
+        .glass-header {
+            background-color: rgba(15, 23, 42, 0.4); /* Reduced opacity for transparency */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            -webkit-backdrop-filter: blur(10px); /* Safari support */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); /* Stronger, transparent shadow */
+            transform: perspective(1000px); /* Establish 3D context */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .glass-header:hover {
+            transform: perspective(1000px) translateY(-2px) rotateX(1deg); /* Slight lift and tilt on hover */
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body class="antialiased relative">
+<!-- Header & Navigation --><header class="sticky top-0 z-50 glass-header">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
+            <!-- Logo updated to use the image and gradient text --><a href="#" class="flex items-center space-x-2">
+                <img src="https://i.postimg.cc/vmhTnRNt/peakprep-logo-128.png" alt="PeakPrep Logo" class="h-8 w-auto">
+                <span class="text-2xl font-extrabold" style="
+                    background-image: linear-gradient(to right, white, #38BDF8); /* white to sky-400 */
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    color: transparent;
+                ">peakprep</span>
+            </a>
+            <div class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="#features" class="hover:text-primary-color transition duration-300">Features</a>
+                <a href="#focus-mode" class="hover:text-primary-color transition duration-300">Focus Mode</a>
+                <a href="#mission" class="hover:text-primary-color transition duration-300">Our Mission</a>
+                <a href="#contact" class="hover:text-primary-color transition duration-300">Contact</a>
+            </div>
+            <!-- UPDATED BUTTON TEXT AND COLOR --><a href="https://chromewebstore.google.com/detail/peakprep/ofmlicdfgdlpfkipggdcgpljbonldfoa?utm_source=ext_app_menu" target="_blank" class="px-5 py-2 text-sm font-semibold rounded-full bg-blue-600 hover:bg-blue-700 transition duration-300 shadow-md shadow-blue-500/50">
+                Login
+            </a>
+        </nav>
+    </header>
+
+    <!-- Glowing Cell Overlay Container --><div class="glowing-cell-overlay"></div>
+
+    <!-- Main content area --><main class="min-h-screen relative z-10">
+
+        <!-- 1. Hero Section --><section class="py-20 md:py-32 text-center container mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-5xl sm:text-7xl font-extrabold tracking-tight mb-6">
+                Reach Your <span class="text-gradient">Peak Potential</span>.
+            </h1>
+            <p class="max-w-3xl mx-auto text-xl text-slate-400 mb-10">
+                🎯 PeakPrep is your all-in-one study companion for <span class="text-white font-semibold">JEE</span> and <span class="text-white font-semibold">NEET</span> built right into your browser!
+It helps you track your progress, stay consistent, and make every study hour count as your exam day approaches.
+            </p>
+            <!-- CTA updated with new URL and text and COLOR --><a href="https://chromewebstore.google.com/detail/peakprep/ofmlicdfgdlpfkipggdcgpljbonldfoa?utm_source=ext_app_menu" target="_blank" class="inline-block px-10 py-3 text-lg font-bold rounded-full bg-blue-600 hover:bg-blue-700 transition duration-300 shadow-xl shadow-blue-500/50 transform hover:scale-105">
+                Install Now
+            </a>
+
+            <!-- Removed: Mock Dashboard Image --></section>
+
+
+        <!-- 2. Key Features Section --><section id="features" class="py-20 md:py-28 container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-extrabold text-center mb-4">
+                The <span class="text-gradient">Smartest Way</span> to Prepare
+            </h2>
+            <p class="text-center text-xl text-slate-400 mb-16 max-w-2xl mx-auto">
+                Stop studying hard. Start studying smart. Our key features ensure every minute counts.
+            </p>
+
+            <!-- New Image added below the text and above the feature cards --><div class="max-w-3xl mx-auto mb-16 rounded-lg shadow-xl overflow-hidden">
+                <img src="https://i.postimg.cc/1zt8CjhN/image.png"
+                     alt="Feature illustration"
+                     class="w-full h-auto object-cover">
+            </div>
+
+            <!-- Updated Feature Cards Grid (6 items in a 3-column layout) --><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <!-- Feature 1: Personalized Study Paths (Kept) --><div class="bg-slate-800/50 p-6 rounded-xl border border-blue-700/30 hover:shadow-2xl hover:shadow-blue-900/50 transition duration-500 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 flex items-center justify-center bg-blue-600 rounded-full mb-4 text-white text-2xl">🧠</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Personalized Study Paths</h3>
+                    <p class="text-slate-300">Adaptive AI that tailors study schedules based on your performance, strengths, and target exam date, ensuring optimal focus.</p>
+                </div>
+
+                <!-- Feature 2: Smart Progress Tracker (Kept) --><div class="bg-slate-800/50 p-6 rounded-xl border border-blue-700/30 hover:shadow-2xl hover:shadow-blue-900/50 transition duration-500 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 flex items-center justify-center bg-sky-600 rounded-full mb-4 text-white text-2xl">📈</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Smart Progress Tracker</h3>
+                    <p class="text-slate-300">Visual dashboards showing real-time daily goals, accuracy rates, and deep topic mastery insights across all subjects.</p>
+                </div>
+
+                <!-- Feature 3: Distraction-Free Focus Mode (Kept) --><div class="bg-slate-800/50 p-6 rounded-xl border border-blue-700/30 hover:shadow-2xl hover:shadow-blue-900/50 transition duration-500 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 flex items-center justify-center bg-cyan-600 rounded-full mb-4 text-white text-2xl">🔒</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Distraction-Free Focus Mode</h3>
+                    <p class="text-slate-300">Activate a dedicated mode that hides non-educational sites and notifications, ensuring uninterrupted study sessions for maximum productivity.</p>
+                </div>
+
+                <!-- Feature 4: Daily Revision Reminders (Kept) --><div class="bg-slate-800/50 p-6 rounded-xl border border-blue-700/30 hover:shadow-2xl hover:shadow-blue-900/50 transition duration-500 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 flex items-center justify-center bg-teal-600 rounded-full mb-4 text-white text-2xl">⏰</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Daily Revision Reminders</h3>
+                    <p class="text-slate-300">Stay consistent and maximize retention with short, smart revision prompts delivered precisely when you need them most.</p>
+                </div>
+                
+                <!-- Feature 5: Minimalist Interface (Kept) --><div class="bg-slate-800/50 p-6 rounded-xl border border-blue-700/30 hover:shadow-2xl hover:shadow-blue-900/50 transition duration-500 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 flex items-center justify-center bg-indigo-600 rounded-full mb-4 text-white text-2xl">🧘</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Minimalist Interface</h3>
+                    <p class="text-slate-300">A clean, distraction-free design that helps you maintain deep focus sessions and achieve flow state while studying.</p>
+                </div>
+
+                <!-- Feature 6: Updated Syllabus 2026 (Kept) --><div class="bg-slate-800/50 p-6 rounded-xl border border-blue-700/30 hover:shadow-2xl hover:shadow-blue-900/50 transition duration-500 transform hover:-translate-y-1">
+                    <div class="w-12 h-12 flex items-center justify-center bg-blue-600 rounded-full mb-4 text-white text-2xl">📚</div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Up-to-Date Syllabus 2026</h3>
+                    <p class="text-slate-300">Always stay ahead of the curve with guaranteed, real-time updates for the 2026 NEET/JEE syllabus changes, ensuring your preparation is always relevant.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- New Section: Master Your Focus with Focus Mode --><section id="focus-mode" class="py-20 md:py-28 container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-extrabold text-center mb-4">
+                Master Your <span class="text-gradient">Focus</span>.
+            </h2>
+            <p class="text-center text-xl text-slate-400 mb-16 max-w-2xl mx-auto">
+                Distractions are the enemy of productivity. Our Focus Mode helps you eliminate them.
+            </p>
+            
+            <!-- Space for Focus Mode Image --><div class="max-w-4xl mx-auto aspect-video bg-slate-800/50 border border-blue-700/30 rounded-lg flex items-center justify-center text-slate-400 text-2xl italic">
+                <img src="https://i.postimg.cc/qM3WPsdH/image.png"
+                     alt="Feature illustration"
+                     class="w-full h-auto object-cover">
+            </div>
+        </section>
+        
+        <section id="mission" class="py-20 md:py-28 bg-slate-800/70 border-y border-blue-700/50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
+                <h2 class="text-4xl font-extrabold mb-4 text-white">
+                    Our Mission: Peak Performance for All
+                </h2>
+                <p class="text-xl text-slate-300 italic mb-8">
+                    "To make top-quality exam preparation accessible, data-driven, and inspiring — helping every student perform at their personal peak."
+                </p>
+                <a href="#" class="inline-block px-8 py-3 text-lg font-semibold rounded-full bg-blue-600 hover:bg-blue-700 transition duration-300 shadow-xl shadow-blue-500/50 transform hover:scale-105">
+                    See How PeakPrep Works →
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer --><footer id="contact" class="bg-slate-900 border-t border-slate-700/50 py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- New Contact Bar --><div class="flex flex-col md:flex-row justify-center md:justify-around items-center text-center md:text-left space-y-6 md:space-y-0 pb-8 mb-8 border-b border-slate-700/50">
+                
+                <!-- Email Contact --><div class="flex items-center space-x-3">
+                    <span class="text-blue-400 text-2xl">📧</span>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-300">Support & Enquiries</p>
+                        <a href="mailto:peakprepapp@gmail.com" class="text-lg text-white hover:text-blue-400 transition duration-300">peakprepapp@gmail.com</a>
+                    </div>
+                </div>
+                
+                <!-- Address --><div class="flex items-center space-x-3">
+                    <span class="text-blue-400 text-2xl">📍</span>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-300">Headquarters</p>
+                        <p class="text-lg text-white">Bangalore, Karnataka</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Existing Copyright and Links --><div class="text-center md:flex md:justify-between md:items-center pt-4">
+                <div class="text-slate-400 mb-4 md:mb-0">
+                    &copy; 2025 PeakPrep. All rights reserved.
+                </div>
+                <div class="flex justify-center space-x-6 text-sm text-slate-400">
+                    <a href="#" class="hover:text-blue-400 transition duration-300">Privacy Policy</a>
+                    <a href="#" class="hover:text-blue-400 transition duration-300">Terms of Service</a>
+                    <a href="#" class="hover:text-blue-400 transition duration-300">Support</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for dynamic glowing cells --><script>
+        const overlay = document.querySelector('.glowing-cell-overlay');
+        const cellSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cell-size'));
+        const glowBlue = getComputedStyle(document.documentElement).getPropertyValue('--glow-blue');
+
+        function createCells() {
+            // Clear existing cells
+            overlay.innerHTML = '';
+            // Calculate number of columns based on window width
+            const numCols = Math.ceil(window.innerWidth / cellSize);
+            // Calculate number of rows based on the *scrollable height* of the document, not just viewport height
+            // This ensures cells are created for the entire page length, even if scrolled
+            const numRows = Math.ceil(document.documentElement.scrollHeight / cellSize);
+
+            // Set grid template columns/rows based on calculations
+            overlay.style.gridTemplateColumns = `repeat(${numCols}, ${cellSize}px)`;
+            // Explicitly setting height for overlay to match document scrollHeight
+            overlay.style.height = `${numRows * cellSize}px`;
+            overlay.style.width = `100%`; // Ensure it spans full width
+
+
+            for (let i = 0; i < numCols * numRows; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('glowing-cell');
+                cell.dataset.index = i; // Store index for easier identification
+                overlay.appendChild(cell);
+            }
+        }
+
+        let glowingInterval;
+
+        function startGlowingCells() {
+            const cells = Array.from(overlay.children);
+            if (cells.length === 0) return;
+
+            // Clear previous interval if any
+            if (glowingInterval) clearInterval(glowingInterval);
+
+            glowingInterval = setInterval(() => {
+                // Remove glow from previously glowing cells
+                cells.forEach(cell => {
+                    if (cell.classList.contains('glow')) {
+                        cell.classList.remove('glow');
+                    }
+                });
+
+                // Select a random number of cells to glow (e.g., 3-7 cells)
+                const numToGlow = Math.floor(Math.random() * 5) + 3;
+                for (let i = 0; i < numToGlow; i++) {
+                    const randomIndex = Math.floor(Math.random() * cells.length);
+                    const cellToGlow = cells[randomIndex];
+                    if (cellToGlow) {
+                        cellToGlow.classList.add('glow');
+                    }
+                }
+            }, 1000); // Change cells every 1000ms (1 second)
+        }
+
+        // Initial setup
+        createCells();
+        startGlowingCells();
+
+        // Recreate cells and restart glowing on window resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                createCells();
+                startGlowingCells(); // Restart with new cell layout
+            }, 250); // Debounce resize for performance
+        });
+    </script>
+
+</body>
+</html>
